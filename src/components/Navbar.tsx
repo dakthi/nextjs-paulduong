@@ -10,10 +10,12 @@ export const Navbar = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const navigation = [
+    { label: "Khóa học", href: "/courses" },
     { label: "Tài liệu", href: "/documents" },
     { label: "Về tôi", href: "/about" },
     { label: "Blog", href: "/blog" },
     { label: "Liên hệ", href: "/contact" },
+    { label: "Admin", href: "/admin" },
   ];
 
   return (

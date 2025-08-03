@@ -20,13 +20,17 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication logic
-    console.log(mode, { email, password, name });
+    // Demo login - accept any credentials
+    console.log("Demo login successful:", mode, { email, password, name });
+    alert(`Demo ${mode === "login" ? "đăng nhập" : "đăng ký"} thành công! (Đây chỉ là demo)`);
+    onClose();
   };
 
   const handleGoogleLogin = () => {
-    // TODO: Implement Google OAuth
-    console.log("Google login");
+    // Demo Google login
+    console.log("Demo Google login successful");
+    alert("Demo Google đăng nhập thành công! (Đây chỉ là demo)");
+    onClose();
   };
 
   return (

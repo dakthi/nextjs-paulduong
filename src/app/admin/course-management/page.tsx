@@ -34,10 +34,10 @@ interface Course {
   modules: any[];
   isPublished: boolean;
   maxDownloads: number;
-  students: number;
-  revenue: number;
-  rating: number;
-  createdAt: string;
+  students?: number;
+  revenue?: number;
+  rating?: number;
+  createdAt?: string;
 }
 
 const mockCourses: Course[] = [
@@ -209,7 +209,7 @@ export default function CourseManagementPage() {
             <div>
               <p className="text-sm text-gray-600">Tổng học viên</p>
               <p className="text-2xl font-bold text-gray-900">
-                {courses.reduce((sum, c) => sum + c.students, 0)}
+                {courses.reduce((sum, c) => sum + (c.students || 0), 0)}
               </p>
             </div>
           </div>
@@ -223,7 +223,7 @@ export default function CourseManagementPage() {
             <div>
               <p className="text-sm text-gray-600">Tổng doanh thu</p>
               <p className="text-2xl font-bold text-gray-900">
-                ${courses.reduce((sum, c) => sum + c.revenue, 0).toFixed(2)}
+                ${courses.reduce((sum, c) => sum + (c.revenue || 0), 0).toFixed(2)}
               </p>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function CourseManagementPage() {
             <div>
               <p className="text-sm text-gray-600">Đánh giá TB</p>
               <p className="text-2xl font-bold text-gray-900">
-                {(courses.reduce((sum, c) => sum + c.rating, 0) / courses.length).toFixed(1)}
+                {courses.length > 0 ? (courses.reduce((sum, c) => sum + (c.rating || 0), 0) / courses.length).toFixed(1) : "0.0"}
               </p>
             </div>
           </div>
@@ -302,7 +302,7 @@ export default function CourseManagementPage() {
                     {course.title}
                   </h4>
                   <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
-                    <span>{course.students} học viên</span>
+                    <span>{course.students || 0} học viên</span>
                     <span>${course.price}</span>
                   </div>
                   <div className="flex gap-2">
@@ -405,8 +405,8 @@ export default function CourseManagementPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">${course.price}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{course.students}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">${course.revenue.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{course.students || 0}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">${(course.revenue || 0).toFixed(2)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       course.isPublished 

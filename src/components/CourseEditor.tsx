@@ -10,10 +10,7 @@ import {
   Edit3,
   Image,
   Video,
-  FileText,
-  DragDropContext,
-  Draggable,
-  Droppable
+  FileText
 } from "lucide-react";
 
 interface Module {
@@ -26,7 +23,7 @@ interface Module {
 }
 
 interface Course {
-  id?: string;
+  id: string;
   title: string;
   description: string;
   shortDescription: string;
@@ -38,6 +35,10 @@ interface Course {
   modules: Module[];
   isPublished: boolean;
   maxDownloads: number;
+  students?: number;
+  revenue?: number;
+  rating?: number;
+  createdAt?: string;
 }
 
 interface CourseEditorProps {
@@ -48,6 +49,7 @@ interface CourseEditorProps {
 
 export function CourseEditor({ course, onSave, onCancel }: CourseEditorProps) {
   const [formData, setFormData] = useState<Course>(course || {
+    id: "",
     title: "",
     description: "",
     shortDescription: "",
@@ -58,7 +60,11 @@ export function CourseEditor({ course, onSave, onCancel }: CourseEditorProps) {
     image: "",
     modules: [],
     isPublished: false,
-    maxDownloads: 3
+    maxDownloads: 3,
+    students: 0,
+    revenue: 0,
+    rating: 0,
+    createdAt: ""
   });
 
   const [activeTab, setActiveTab] = useState("basic");
@@ -94,14 +100,6 @@ export function CourseEditor({ course, onSave, onCancel }: CourseEditorProps) {
     }));
   };
 
-  const updateModule = (moduleId: string, updates: Partial<Module>) => {
-    setFormData(prev => ({
-      ...prev,
-      modules: prev.modules.map(m => 
-        m.id === moduleId ? { ...m, ...updates } : m
-      )
-    }));
-  };
 
   const handleSave = () => {
     onSave(formData);

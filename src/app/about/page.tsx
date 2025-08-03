@@ -28,7 +28,7 @@ export default function AboutPage() {
           </div>
           <div className="relative">
             <img 
-              src="/img/paul-duong-6.jpg" 
+              src="/img/paul-duong-2.jpg" 
               alt="Paul Duong" 
               className="rounded-lg shadow-xl w-full object-cover"
             />

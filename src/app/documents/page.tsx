@@ -62,10 +62,9 @@ export default function DocumentsPage() {
   return (
     <div className="py-20">
       <Container>
-        <SectionTitle
-          title="Tài liệu của Paul Duong"
-          desc="Bộ sưu tập tài liệu chất lượng cao về định cư Canada, du học và kinh doanh"
-        />
+        <SectionTitle title="Tài liệu của Paul Duong">
+          <p>Bộ sưu tập tài liệu chất lượng cao về định cư Canada, du học và kinh doanh</p>
+        </SectionTitle>
 
         {/* Search Bar */}
         <div className="flex justify-center mb-8">

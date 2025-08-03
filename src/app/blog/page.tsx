@@ -75,7 +75,7 @@ export default async function BlogPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             {blogPosts.slice(1).map((post) => (
             <article
-              key={post.id}
+              key={post.slug}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-gray-200 group"
             >
               <div className="relative overflow-hidden">
