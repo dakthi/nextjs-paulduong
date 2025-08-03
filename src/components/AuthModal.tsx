@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { X } from "lucide-react";
 
 interface AuthModalProps {
@@ -15,22 +16,78 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Demo login - accept any credentials
-    console.log("Demo login successful:", mode, { email, password, name });
-    alert(`Demo ${mode === "login" ? "đăng nhập" : "đăng ký"} thành công! (Đây chỉ là demo)`);
-    onClose();
+    setIsLoading(true);
+    setError("");
+
+    try {
+      if (mode === "login") {
+        const result = await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          setError("Email hoặc mật khẩu không đúng");
+        } else {
+          onClose();
+          // Refresh the page to update the session
+          window.location.reload();
+        }
+      } else {
+        // Register mode
+        if (password !== confirmPassword) {
+          setError("Mật khẩu xác nhận không khớp");
+          return;
+        }
+
+        const response = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        });
+
+        if (response.ok) {
+          // Auto login after successful registration
+          const result = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+          });
+
+          if (result?.error) {
+            setError("Đăng ký thành công nhưng không thể đăng nhập tự động");
+          } else {
+            onClose();
+            window.location.reload();
+          }
+        } else {
+          const data = await response.json();
+          setError(data.error || "Có lỗi xảy ra khi đăng ký");
+        }
+      }
+    } catch (error) {
+      setError("Có lỗi xảy ra. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    // Demo Google login
-    console.log("Demo Google login successful");
-    alert("Demo Google đăng nhập thành công! (Đây chỉ là demo)");
-    onClose();
+  const handleGoogleLogin = async () => {
+    try {
+      await signIn("google", { callbackUrl: "/" });
+    } catch (error) {
+      setError("Có lỗi xảy ra khi đăng nhập với Google");
+    }
   };
 
   return (
@@ -51,6 +108,11 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
         {/* Content */}
         <div className="p-6">
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+              {error}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <div>
@@ -118,9 +180,10 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
             <button
               type="submit"
-              className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition font-medium"
+              disabled={isLoading}
+              className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {mode === "login" ? "Đăng nhập" : "Đăng ký"}
+              {isLoading ? "Đang xử lý..." : mode === "login" ? "Đăng nhập" : "Đăng ký"}
             </button>
           </form>
 

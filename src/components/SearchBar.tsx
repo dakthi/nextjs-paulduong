@@ -46,9 +46,10 @@ const mockDocuments = [
 interface SearchBarProps {
   placeholder?: string;
   showSuggestions?: boolean;
+  onSearch?: (query: string) => void;
 }
 
-export function SearchBar({ placeholder = "Tìm kiếm tài liệu...", showSuggestions = true }: SearchBarProps) {
+export function SearchBar({ placeholder = "Tìm kiếm tài liệu...", showSuggestions = true, onSearch }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [filteredResults, setFilteredResults] = useState<typeof mockDocuments>([]);
@@ -57,6 +58,9 @@ export function SearchBar({ placeholder = "Tìm kiếm tài liệu...", showSugg
   useEffect(() => {
     if (query.trim() === "") {
       setFilteredResults([]);
+      if (onSearch) {
+        onSearch("");
+      }
       return;
     }
 
@@ -66,7 +70,16 @@ export function SearchBar({ placeholder = "Tìm kiếm tài liệu...", showSugg
     );
     
     setFilteredResults(filtered);
-  }, [query]);
+
+    // Debounced search
+    const timeoutId = setTimeout(() => {
+      if (onSearch) {
+        onSearch(query);
+      }
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [query, onSearch]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
